@@ -12,70 +12,29 @@ URL="http://localhost:9200"
 
 INDEX="index_name"
 
-QUERY="SEARCH QUERY"
+QUERY="ivanov OR petrov"
 
 TIMESTAMP_FIELD="@timestamp"
 
+START_TIME="2021-01-31T06:00:00.000Z" # More Example: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html
+
+END_TIME="2021-01-31T18:00:00.000Z"   # More Example: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html
+
 #CRED="--user login:password"
+
+execute_file="/tmp/request.sh"
+
 
 #--------------------------------------------
 
-curl -s -k -XGET -H "Content-Type: application/json" "$URL/$INDEX/_count" -d '{
-    "query": {
-        "bool": {
-            "must" : {
-                "query_string": {
-                    "query": "'"$QUERY"'"
-                }
-            },
-            "filter": {
-                "bool": {
-                    "must": {
-                       "range" : {
-                          "'"$TIMESTAMP_FIELD"'": {
-                                "gt":"2021-04-26 00:00:00.000",
-                                "lte":"now",
-                                "time_zone":"+03:00"
-                           }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}' $CRED | jq '.count'
+echo "curl -s -k -XGET -H "Content-Type: application/json" "$URL/$INDEX/_count" -d '{"query": {"bool": {"must": {"query_string": {"query": "$QUERY"}},"filter": {"bool": {"must": {"range": {"$TIMESTAMP_FIELD": {"gt":"$START_TIME", "lte":"$END_TIME" } } } } } } } }' $CRED | jq '.count'" > $execute_file
+
+chmod +x $execute_file && sh $execute_file
 
 
-############################################
-######## R E A L    E X A M P L E ##########
-#
-# curl -s -k -XGET -H "Content-Type: application/json" "https://elastic.example.com/index_123/_count" -d '{
-#    "query": {
-#        "bool": {
-#            "must" : {
-#                "query_string": {
-#                    "query": "Type:Nginx AND (/market/price/349053)"
-#                }
-#            },
-#            "filter": {
-#                "bool": {
-#                    "must": {
-#                       "range" : {
-#                          "timestamp": {
-#                                "gt":"2020-01-30T15:33:10.543Z",
-#                                "lte":"now",
-#                                "time_zone":"+00:00"
-#                           }
-#                        }
-#                    }
-#                }
-#            }
-#        }
-#    }
-#}' $CRED
-#
-#
-#
-# Timestamp field values example: "2020-01-30T15:33:10.543Z" OR "2019-06-30 10:00:00.000" OR "now-1d/d" OR ...
-#
-#
+#-------------- E X A M P L E ----------------
+
+example_file="/tmp/example_of_request.txt"
+
+echo "curl -s -k -XGET -H "Content-Type: application/json" "https://elastic.example.com/index_123/_count" -d '{"query": {"bool": {"must": {"query_string": {"query": "Type:Nginx AND yandex.ru/market/id3434" } },"filter": {"bool": {"must": {"range": {"timestamp": {"gt":"2020-01-30 15:33:10.543", "lte":"now", "time_zone":"+03:00" } } } } } } } }' --user admin:superpassword123" > $example_file
+
