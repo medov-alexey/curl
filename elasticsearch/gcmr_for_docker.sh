@@ -52,7 +52,7 @@ result=$(sh $execute_file)
 
 if [ "$?" -ne "0" ]; then echo "Failed to connect to Elasticsearch on $1";exit 104;fi
 
-if [ "$(echo $result)" == "null" ]; then echo "Problem with one of the arguments you passed. Check again carefully how you ran the command $0"; else echo $result;fi
+if [ "$(echo $result)" == "null" ]; then echo "Problem with one of the arguments you passed. Check again carefully how you ran the command $0"; else echo $result > /var/www/html/metrics;fi
 
 
 
