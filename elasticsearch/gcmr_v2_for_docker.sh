@@ -48,7 +48,7 @@ metrics_file="/usr/share/nginx/html/metrics"
 
 execute_file="/tmp/request.sh"
 
-echo "curl --stderr - -s -S -k -XGET -H \"Content-Type: application/json\" \"$URL/$INDEX/_count\" -d '{\"query\": {\"bool\": {\"must\": {\"query_string\": {\"query\": \"$QUERY\"}},\"filter\": {\"bool\": {\"must\": {\"range\": {\"$TIMESTAMP_FIELD\": {\"gt\":\"$START_TIME\", \"lte\":\"$END_TIME\", \"time_zone\":\"TIMEZONE\" } } } } } } } }' $CRED 2> /dev/null | jq '.count' 2> /dev/null " > $execute_file
+echo "curl --stderr - -s -S -k -XGET -H \"Content-Type: application/json\" \"$URL/$INDEX/_count\" -d '{\"query\": {\"bool\": {\"must\": {\"query_string\": {\"query\": \"$QUERY\"}},\"filter\": {\"bool\": {\"must\": {\"range\": {\"$TIMESTAMP_FIELD\": {\"gt\":\"$START_TIME\", \"lte\":\"$END_TIME\", \"time_zone\":\"$TIMEZONE\" } } } } } } } }' $CRED 2> /dev/null | jq '.count' 2> /dev/null " > $execute_file
 
 chmod +x $execute_file
 
