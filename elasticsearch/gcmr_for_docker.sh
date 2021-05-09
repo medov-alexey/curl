@@ -42,8 +42,6 @@ CRED="$CRED"
 
 metrics_file="/usr/share/nginx/html/metrics"
 
-if [ ! -f $metrics_file ]; then echo 0 > $metrics_file; fi
-
 #--------------------------------------------
 
 execute_file="/tmp/request.sh"
