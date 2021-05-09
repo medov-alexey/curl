@@ -8,13 +8,6 @@
 
 #--------------------------------------------
 
-if [ "$#" -lt 1 ]; then
-    echo "No variables specified !"
-    exit 101
-fi
-
-#--------------------------------------------
-
 if [ "$1" == "help" ] || [ "$1" == "HELP" ]; then
     echo -e "\nExample for use:\n\n$0 \"http://localhost:9200\" \"mysql_index\" \"Type:Nginx AND Htth_Method:502\" \"@timestamp\" \"2021-01-31T06:00:00.000Z\" \"2021-01-31T18:00:00.000Z\" \n"
     echo -e "OR \n"
@@ -23,13 +16,6 @@ if [ "$1" == "help" ] || [ "$1" == "HELP" ]; then
     echo -e "\nMore information: https://github.com/medov-alexey/curl/blob/master/elasticsearch \n"
     echo -e "---------------------------------------------------------------------------------"
     exit 0
-fi
-
-#--------------------------------------------
-
-if [ "$#" -lt 6 ]; then
-    echo "The minimum number of arguments is 6 !"
-    exit 102
 fi
 
 #--------------------------------------------
