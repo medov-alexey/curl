@@ -42,7 +42,7 @@ CRED="$CRED"
 
 TIMEZONE="$TIMEZONE"
 
-if [ -z "$TIMEZONE" ]; then TIMEZONE="now";fi
+if [ -z "$TIMEZONE" ]; then TIMEZONE="+00:00";fi
 
 #--------------------------------------------
 
