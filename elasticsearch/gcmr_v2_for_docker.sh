@@ -36,9 +36,13 @@ START_TIME="$START_TIME"
 
 END_TIME="$END_TIME"
 
+CRED="$CRED"
+
+#--------------------------------------------
+
 TIMEZONE="$TIMEZONE"
 
-CRED="$CRED"
+if [ -z "$TIMEZONE" ]; then TIMEZONE="now";fi
 
 #--------------------------------------------
 
