@@ -40,6 +40,12 @@ CRED="$CRED"
 
 #--------------------------------------------
 
+metrics_file="/usr/share/nginx/html/metrics"
+
+if [ ! -f $metrics_file ]; then echo 0 > $metrics_file; fi
+
+#--------------------------------------------
+
 execute_file="/tmp/request.sh"
 
 echo "curl --stderr - -s -S -k -XGET -H \"Content-Type: application/json\" \"$URL/$INDEX/_count\" -d '{\"query\": {\"bool\": {\"must\": {\"query_string\": {\"query\": \"$QUERY\"}},\"filter\": {\"bool\": {\"must\": {\"range\": {\"$TIMESTAMP_FIELD\": {\"gt\":\"$START_TIME\", \"lte\":\"$END_TIME\" } } } } } } } }' $CRED 2> /dev/null | jq '.count' 2> /dev/null " > $execute_file
@@ -52,7 +58,7 @@ result=$(sh $execute_file)
 
 if [ "$?" -ne "0" ]; then echo "Failed to connect to Elasticsearch on $1";exit 104;fi
 
-if [ "$(echo $result)" == "null" ]; then echo "Problem with one of the arguments you passed. Check again carefully how you ran the command $0"; else echo $result > /usr/share/nginx/html/metrics;fi
+if [ "$(echo $result)" == "null" ]; then echo "Problem with one of the arguments you passed. Check again carefully how you ran the command $0"; else echo $result > $metrics_file;fi
 
 
 
