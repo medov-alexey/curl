@@ -8,15 +8,7 @@ STACK_ID="1st5"
 
 #-------------------------------
 
-curl -f -s -S -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" \
--X GET \
--H 'Content-Type: application/json' \
--d '{
-        "rollingRestartStrategy": {
-                "batchSize": 1,
-                "intervalMillis": 2000
-        }
-}' http://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stack/$STACK_ID/services | jq -r '.data[] .name'
+curl -f -s -S -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" -X GET -H 'Content-Type: application/json'  http://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stack/$STACK_ID/services | jq -r '.data[] .name'
 
 #-------------------------------
 

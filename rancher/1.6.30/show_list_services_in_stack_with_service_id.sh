@@ -8,11 +8,11 @@ STACK_ID="1st5"
 
 #-------------------------------
 
-count=$(curl -f -s -S -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" -X GET -H 'Content-Type: application/json' -d '{"rollingRestartStrategy": { "batchSize": 1, "intervalMillis": 2000 }}' http://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stack/$STACK_ID/services | jq '.data[] .name' | wc -l)
+count=$(curl -f -s -S -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" -X GET -H 'Content-Type: application/json' http://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stack/$STACK_ID/services | jq '.data[] .name' | wc -l)
 
 for ((i=0; i<$count; i++))
 do
-echo "curl -f -s -S -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" -X GET -H 'Content-Type: application/json' -d '{"rollingRestartStrategy": { "batchSize": 1, "intervalMillis": 2000 }}' http://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stack/$STACK_ID/services | jq --tab -r '.data[$i] | .name,.id' " > /tmp/test.txt; chmod +x /tmp/test.txt; echo $(sh /tmp/test.txt)
+echo "curl -f -s -S -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" -X GET -H 'Content-Type: application/json' http://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stack/$STACK_ID/services | jq --tab -r '.data[$i] | .name,.id' " > /tmp/test.txt; chmod +x /tmp/test.txt; echo $(sh /tmp/test.txt)
 done
 
 #-------------------------------
