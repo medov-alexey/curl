@@ -35,7 +35,7 @@ do
    echo $(eval $cmd) >> $TEMP_FILE_1
 done
 
-STACK_ID=$(cat $TEMP_FILE_1 | grep $STACK_NAME | awk '{print $2}')
+STACK_ID=$(cat $TEMP_FILE_1 | grep "^$STACK_NAME\s" | awk '{print $2}')
 
 #-------------------------------
 # STEP 2
@@ -48,7 +48,7 @@ do
    echo $(eval $cmd) >> $TEMP_FILE_2
 done
 
-SERVICE_ID=$(cat $TEMP_FILE_2 | grep $SERVICE_NAME | awk '{print $2}')
+SERVICE_ID=$(cat $TEMP_FILE_2 | grep "^$SERVICE_NAME\s" | awk '{print $2}')
 
 #-------------------------------
 # STEP 3
