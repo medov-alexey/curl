@@ -68,5 +68,3 @@ curl -f -s -S -k -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" \
 #-------------------------------
 
 if [ "$?" -ne "0" ]; then echo "Error"; exit 127; else echo "Success"; exit 0; fi
-
-
