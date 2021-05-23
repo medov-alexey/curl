@@ -47,11 +47,11 @@ cat /dev/null > $TEMP_FILE_4
 #-------------------------------
 # STEP 0 - Check connect to server
 
-curl --connect-timeout 10 -k -s -S -O /dev/null $RANCHER_PROTOCOL://$RANCHER_URL > /dev/null 2>&1
+curl --connect-timeout 3 --max-time 3 -k -s -S -O /dev/null -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" $RANCHER_PROTOCOL://$RANCHER_URL > /dev/null 2>&1
 
 if [ "$?" -ne "0" ]; then echo $(echo "$(date +"%F-----%H:%M:%S") - Error - Server $RANCHER_PROTOCOL://$RANCHER_URL is not available"); exit 127; fi
 
-wget -S --no-check-certificate -O $TEMP_FILE_3 --user "$RANCHER_ACCESS_KEY" --password "$RANCHER_SECRET_KEY" -X POST --header=Content-Type:application/json $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stacks > $TEMP_FILE_4 2>&1
+wget --connect-timeout=3 -T 3 -S --no-check-certificate -O $TEMP_FILE_3 --user "$RANCHER_ACCESS_KEY" --password "$RANCHER_SECRET_KEY" -X POST --header=Content-Type:application/json $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stacks > $TEMP_FILE_4 2>&1
 
 cat $TEMP_FILE_4 | grep "HTTP/" | tail -n 1 | grep 403 > /dev/null 2>&1
 
@@ -62,7 +62,7 @@ if [ "$?" -eq "0" ]; then echo "$(date +"%F-----%H:%M:%S") - Error - Please chec
 #-------------------------------
 # STEP 1 - Check stacks count
 
-wget -q -S --no-check-certificate -O $TEMP_FILE_3 --user "$RANCHER_ACCESS_KEY" --password "$RANCHER_SECRET_KEY" -X POST --header=Content-Type:application/json $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stacks > $TEMP_FILE_4 2>&1; 
+wget --connect-timeout=3 -T 3 -q -S --no-check-certificate -O $TEMP_FILE_3 --user "$RANCHER_ACCESS_KEY" --password "$RANCHER_SECRET_KEY" -X POST --header=Content-Type:application/json $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stacks > $TEMP_FILE_4 2>&1; 
 
 if [ "$?" -ne "0" ]; then echo $(echo "$(date +"%F-----%H:%M:%S") - Error - $(cat $TEMP_FILE_4 | grep "HTTP/" | tail -n 1)"); exit 127; fi
 
@@ -75,7 +75,7 @@ count_stacks=$(cat $TEMP_FILE_3 | jq -r '.data[].name' | wc -l)
 
 for ((i=0; i<$count_stacks; i++))
 do
-   cmd=$(echo "curl -f -s -S -k -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" -X GET -H 'Content-Type: application/json' $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stacks | jq -r '.data[$i].name,.data[$i].id' ")
+   cmd=$(echo "curl -f --connect-timeout 3 --max-time 3 -s -S -k -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" -X GET -H 'Content-Type: application/json' $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stacks | jq -r '.data[$i].name,.data[$i].id' ")
    echo $(eval $cmd) >> $TEMP_FILE_1
 done
 
@@ -90,11 +90,11 @@ rm -rf $TEMP_FILE_1
 #-------------------------------
 # STEP 3 - Find service id
 
-count_services=$(curl -f -s -S -k -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" -X GET -H 'Content-Type: application/json' $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stack/$STACK_ID/services | jq '.data[] .name' | wc -l)
+count_services=$(curl -f --connect-timeout 3 --max-time 3 -s -S -k -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" -X GET -H 'Content-Type: application/json' $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stack/$STACK_ID/services | jq '.data[] .name' | wc -l)
 
 for ((i=0; i<$count_services; i++))
 do
-   cmd=$(echo "curl -f -s -S -k -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" -X GET -H 'Content-Type: application/json' $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stack/$STACK_ID/services | jq -r '.data[$i] | .name,.id' ")
+   cmd=$(echo "curl -f --connect-timeout 3 --max-time 3 -s -S -k -u "$RANCHER_ACCESS_KEY:$RANCHER_SECRET_KEY" -X GET -H 'Content-Type: application/json' $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stack/$STACK_ID/services | jq -r '.data[$i] | .name,.id' ")
    echo $(eval $cmd) >> $TEMP_FILE_2
 done
 
@@ -109,7 +109,7 @@ rm -rf $TEMP_FILE_2
 #-------------------------------
 # STEP 4 - Restart service
 
-wget --no-check-certificate -O /dev/null -S --user "$RANCHER_ACCESS_KEY" --password "$RANCHER_SECRET_KEY" -X POST --header=Content-Type:application/json --post-data '{"rollingRestartStrategy": {"batchSize": 1, "intervalMillis": 2000}}' $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/services/$SERVICE_ID?action=restart > $TEMP_FILE_4 2>&1
+wget --connect-timeout=3 -T 3 --no-check-certificate -O /dev/null -S --user "$RANCHER_ACCESS_KEY" --password "$RANCHER_SECRET_KEY" -X POST --header=Content-Type:application/json --post-data '{"rollingRestartStrategy": {"batchSize": 1, "intervalMillis": 2000}}' $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/services/$SERVICE_ID?action=restart > $TEMP_FILE_4 2>&1
 
 if [ "$?" -ne "0" ]; then echo $(echo "$(date +"%F-----%H:%M:%S") - Error - Restart: $(cat $TEMP_FILE_4 | grep "HTTP/" | tail -n 1)."); exit 127; else rm -rf $TEMP_FILE_3 $TEMP_FILE_4; echo "$(date +"%F-----%H:%M:%S") - Success - Restart"; exit 0; fi
 
