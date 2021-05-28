@@ -51,9 +51,9 @@ curl --connect-timeout 3 --max-time 3 -k -s -S -O /dev/null -u "$RANCHER_ACCESS_
 
 if [ "$?" -ne "0" ]; then echo $(echo "$(date +"%F-----%H:%M:%S") - Error - Server $RANCHER_PROTOCOL://$RANCHER_URL is not available"); exit 127; fi
 
-wget --connect-timeout=3 -T 3 -S --no-check-certificate -O $TEMP_FILE_3 --user "$RANCHER_ACCESS_KEY" --password "$RANCHER_SECRET_KEY" -X POST --header=Content-Type:application/json $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stacks > $TEMP_FILE_4 2>&1
+wget --connect-timeout=3 -T 3 -S --no-check-certificate -o $TEMP_FILE_3 --user "$RANCHER_ACCESS_KEY" --password "$RANCHER_SECRET_KEY" -X POST --header=Content-Type:application/json $RANCHER_PROTOCOL://$RANCHER_URL/v2-beta/projects/$PROJECT_ID/stacks > /dev/null 2>&1
 
-cat $TEMP_FILE_4 | grep "HTTP/" | tail -n 1 | grep 403 > /dev/null 2>&1
+cat $TEMP_FILE_3 | grep "HTTP/" | tail -n 1 | grep 403 | grep Forbidden > /dev/null 2>&1
 
 if [ "$?" -eq "0" ]; then echo "$(date +"%F-----%H:%M:%S") - Error - Please check Rancher PROJECT_ID"; exit 127; fi
 
